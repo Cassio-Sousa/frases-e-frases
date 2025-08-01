@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Minhas Poesias SPA</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb') no-repeat center center fixed;
+    background-size: cover;
+  }
+  .dark body {
+    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?grayscale') no-repeat center center fixed;
+    background-size: cover;
+  }
+  .content-wrapper {
+    background: rgba(255 255 255 / 0.8);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.1);
+    min-height: 60vh;
+  }
+  .tema-amor h2 {
+    color: #db2777; /* pink-600 */
+  }
+  .tema-natureza h2 {
+    color: #16a34a; /* green-600 */
+  }
+  .tema-reflexao h2 {
+    color: #2563eb; /* blue-600 */
+  }
+  /* Botão flutuante */
+  #btn-topo {
+    position: fixed;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    background-color: #2563eb;
+    color: white;
+    border-radius: 9999px;
+    padding: 0.75rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgb(37 99 235 / 0.5);
+    transition: background-color 0.3s;
+  }
+  #btn-topo:hover {
+    background-color: #1e40af;
+  }
+</style>
+<script>
+  // Dados das poesias por categoria
+  const poesias = {
+    amor: {
+      titulo: "Categoria: Amor ❤️",
+      artigos: [
+        {
+          titulo: "O Silêncio da Noite",
+          texto: `No silêncio profundo da noite<br>
+                 ecoa a voz de um coração só.<br>
+                 A lua observa, testemunha discreta,<br>
+                 as dores que a escuridão acalenta.`
+        },
+        {
+          titulo: "Amor Eterno",
+          texto: `Nos olhos teus, um mar calmo,<br>
+                 promessas feitas no vento,<br>
+                 laços que nem o tempo desfaz,<br>
+                 coração em eterno movimento.`
+        }
+      ],
+      temaClasse: "tema-amor"
+    },
+    natureza: {
+      titulo: "Categoria: Natureza 🌿",
+      artigos: [
+        {
+          titulo: "Flores ao Vento",
+          texto: `Flores dançam ao vento<br>
+                 como segredos ao tempo.<br>
+                 Sonhos que não se prendem,<br>
+                 seguem livres, eternamente.`
+        },
+        {
+          titulo: "Caminho das Árvores",
+          texto: `Sob o céu azul, árvores sussurram,<br>
+                 histórias de raízes antigas.<br>
+                 Passos leves na mata viva,<br>
+                 conexão profunda com a vida.`
+        }
+      ],
+      temaClasse: "tema-natureza"
+    },
+    reflexao: {
+      titulo: "Categoria: Reflexão 💭",
+      artigos: [
+        {
+          titulo: "Entre Sombras",
+          texto: `Nos caminhos da mente<br>
+                 onde a dúvida habita,<br>
+                 cada passo é um segredo<br>
+                 que a alma acredita.`
+        },
+        {
+          titulo: "Pensamentos ao Vento",
+          texto: `Ideias que voam longe,<br>
+                 questionam e iluminam.<br>
+                 Silêncio que fala alto,<br>
+                 alma que se anima.`
+        }
+      ],
+      temaClasse: "tema-reflexao"
+    }
+  };
+
+  // Alterna tema claro/escuro
+  function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+  }
+
+  // Volta ao topo da página suavemente
+  function voltarAoTopo() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Trocar fundo via prompt
+  function alterarFundo() {
+    const url = prompt('Digite a URL da imagem de fundo:');
+    if (url) {
+      document.body.style.background = `url('${url}') no-repeat center center fixed`;
+      document.body.style.backgroundSize = 'cover';
+    }
+  }
+
+  // Renderiza poesias na div #conteudo baseado na categoria
+  function renderizarCategoria(cat) {
+    const container = document.getElementById('conteudo');
+    if (!poesias[cat]) {
+      container.innerHTML = `<p class="text-center text-red-600">Categoria não encontrada.</p>`;
+      return;
+    }
+    const data = poesias[cat];
+    document.getElementById('conteudo-wrapper').className = `content-wrapper ${data.temaClasse}`;
+    let html = `<h2 class="text-3xl font-bold mb-6">${data.titulo}</h2>`;
+    data.artigos.forEach((art, idx) => {
+      html += `
+        <article class="mb-10">
+          <h3 class="text-2xl font-semibold mb-2">${art.titulo}</h3>
+          <p class="mb-4 leading-relaxed" style="white-space: pre-wrap;">${art.texto}</p>
+          <button onclick="voltarAoTopo()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Voltar ao topo</button>
+        </article>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  // Atualiza conteúdo conforme hash da URL
+  function atualizarConteudoPorHash() {
+    const hash = location.hash.replace('#','') || 'amor';
+    renderizarCategoria(hash);
+  }
+
+  // Configuração inicial
+  window.addEventListener('load', () => {
+    atualizarConteudoPorHash();
+    // Atualiza conteúdo se hash mudar (ex: clicar nos links)
+    window.addEventListener('hashchange', atualizarConteudoPorHash);
+  });
+</script>
+</head>
+<body class="bg-white/80 dark:bg-gray-900/80 text-gray-900 dark:text-white transition-colors backdrop-blur-sm min-h-screen flex flex-col">
+<header class="p-5 flex justify-between items-center border-b dark:border-gray-700 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md rounded-b-xl sticky top-0 z-10">
+  <h1 class="text-2xl font-bold select-none cursor-default">Minhas Poesias</h1>
+  <nav class="space-x-6">
+    <a href="#amor" class="hover:underline text-pink-600 dark:text-pink-400 font-semibold">Amor ❤️</a>
+    <a href="#natureza" class="hover:underline text-green-600 dark:text-green-400 font-semibold">Natureza 🌿</a>
+    <a href="#reflexao" class="hover:underline text-blue-600 dark:text-blue-400 font-semibold">Reflexão 💭</a>
+  </nav>
+  <div class="space-x-4">
+    <button onclick="toggleTheme()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Alternar Tema</button>
+    <button onclick="alterarFundo()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Trocar Fundo</button>
+  </div>
+</header>
+
+<main class="flex-grow max-w-4xl mx-auto p-6">
+  <div id="conteudo-wrapper" class="content-wrapper tema-amor">
+    <div id="conteudo"></div>
+  </div>
+</main>
+
+<button id="btn-topo" onclick="voltarAoTopo()" aria-label="Voltar ao topo">↑</button>
+
+<footer class="p-5 text-center text-gray-500 border-t dark:border-gray-700 mt-10 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md rounded-t-xl select-none">
+  © 2025 Minhas Poesias - Feito por Júlio
+</footer>
+
+</body>
+</html>
